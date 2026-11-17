@@ -33,6 +33,7 @@ export interface Obstacle {
   center_clue: {
     question: string;
     answer: string;
+    char_count?: number;
     is_revealed?: boolean;
   };
 }

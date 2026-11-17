@@ -244,6 +244,40 @@ export const DEFAULT_OBSTACLES: Obstacle[] = [
       question: 'Nhạc khí gõ tiêu biểu bằng kim loại đồng của nền văn minh sông Hồng, biểu tượng trường tồn của văn hóa Việt Nam?',
       answer: 'TRỐNG ĐỒNG'
     }
+  },
+  {
+    id: 'obs-4',
+    title: 'VCNV: HOÀNG THÀNH THĂNG LONG',
+    keyword: 'HOÀNG THÀNH THĂNG LONG',
+    char_count: 20,
+    image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=800',
+    rows: [
+      { row: 1, char_count: 10, question: 'Tác phẩm bất hủ được vua Lý Thái Tổ ban bố vào năm Canh Tuất 1010 để quyết định dời đô từ Hoa Lư về Đại La?', answer: 'CHIẾU DỜI ĐÔ' },
+      { row: 2, char_count: 6, question: 'Năm 2010, tổ chức nào của Liên Hợp Quốc đã công nhận Khu Di tích Trung tâm Hoàng thành Thăng Long là Di sản Văn hóa Thế giới?', answer: 'UNESCO' },
+      { row: 3, char_count: 7, question: 'Cửa chính dẫn vào Cấm thành Thăng Long xưa, được xây dựng kiên cố theo lối cuốn vòm bằng đá thời Lê sơ?', answer: 'ĐOAN MÔN' },
+      { row: 4, char_count: 5, question: 'Công trình kiến trúc kỳ vĩ được xây dựng đầu thời Nguyễn năm 1812 nằm trong khuôn viên Hoàng thành ngày nay có cờ Tổ quốc tung bay?', answer: 'CỘT CỜ' },
+    ],
+    center_clue: {
+      question: 'Thủ đô ngàn năm văn hiến, trung tâm chính trị, văn hóa của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam?',
+      answer: 'HÀ NỘI'
+    }
+  },
+  {
+    id: 'obs-5',
+    title: 'VCNV: VỊNH HẠ LONG',
+    keyword: 'VỊNH HẠ LONG',
+    char_count: 11,
+    image_url: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800',
+    rows: [
+      { row: 1, char_count: 10, question: 'Tỉnh ven biển thuộc vùng Đông Bắc Việt Nam có vịnh Hạ Long kỳ quan thiên nhiên thế giới?', answer: 'QUẢNG NINH' },
+      { row: 2, char_count: 4, question: 'Con vật thần thoại trong truyền thuyết dân gian bay từ trời xuống che chở cho người Việt đánh tan giặc ngoại xâm gắn với tên vịnh?', answer: 'RỒNG' },
+      { row: 3, char_count: 6, question: 'Dạng địa hình karst đặc trưng của quần thể hàng nghìn hòn đảo kỳ vĩ trên vịnh Hạ Long được cấu tạo từ loại đá nào?', answer: 'ĐÁ VÔI' },
+      { row: 4, char_count: 6, question: 'Danh hiệu quốc tế vinh danh vịnh Hạ Long vào năm 2011 cùng với 6 địa danh nổi tiếng khác trên toàn cầu?', answer: 'KỲ QUAN' },
+    ],
+    center_clue: {
+      question: 'Vùng nước mặn rộng lớn bao bọc lãnh thổ phía Đông và Nam của nước ta mang lại nguồn lợi to lớn?',
+      answer: 'BIỂN'
+    }
   }
 ];
 

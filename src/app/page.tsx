@@ -12,7 +12,7 @@ import QuestionBankView from '@/components/QuestionBankView';
 import RulesModal from '@/components/RulesModal';
 import { OlympiaQuestion, Obstacle } from '@/lib/types';
 import { fetchQuestionsFromSupabase, fetchObstaclesFromSupabase } from '@/lib/supabase';
-import { Trophy, Play, Sparkles, User, Award, ShieldCheck } from 'lucide-react';
+import { Trophy, Play, Sparkles, User, Award, ShieldCheck, Radio } from 'lucide-react';
 import { soundManager } from '@/lib/audio';
 
 export default function Home() {
@@ -96,10 +96,10 @@ export default function Home() {
   const vdQuestions = allQuestions.filter((q) => q.round === 'vd');
 
   return (
-    <div className="min-h-screen olympia-gradient-bg text-slate-100 flex flex-col selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen vtv-studio-bg text-slate-100 flex flex-col selection:bg-amber-500 selection:text-slate-950">
       <Header currentTab={currentTab} setCurrentTab={setCurrentTab} score={totalScore} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-center">
         {loading ? (
           <div className="text-center py-24">
             <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -113,18 +113,19 @@ export default function Home() {
             {currentTab === 'solo' && (
               <>
                 {soloStage === 'intro' && (
-                  <div className="olympia-card rounded-3xl p-8 md:p-12 max-w-3xl mx-auto border-amber-500/40 glow-gold text-center relative overflow-hidden">
-                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-widest mb-4">
-                      <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-                      <span>Trận Đấu Đỉnh Cao • 4 Vòng Thi Chuẩn VTV</span>
+                  <div className="vtv-question-box rounded-3xl p-6 sm:p-10 md:p-12 max-w-3xl mx-auto border-amber-500/60 shadow-2xl text-center relative overflow-hidden my-4">
+                    {/* Live Broadcast Badge */}
+                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-red-600/20 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-widest mb-4 animate-pulse">
+                      <Radio className="w-3.5 h-3.5" />
+                      <span>TRỰC TIẾP TRƯỜNG QUAY S9 • VTV3</span>
                     </div>
 
-                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-yellow-300 to-amber-500 mb-4 drop-shadow">
+                    <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-yellow-300 to-amber-500 mb-3 drop-shadow-lg">
                       Đường Lên Đỉnh Olympia
                     </h2>
 
-                    <p className="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-8 leading-relaxed">
-                      Hãy nhập tên của bạn và bắt đầu hành trình chinh phục 4 đỉnh núi tri thức:
+                    <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
+                      Chào mừng bạn đến với đấu trường trí tuệ danh giá nhất dành cho học sinh Việt Nam. Hãy bước lên bục thi đấu và chinh phục 4 chặng núi:
                       <br />
                       <strong className="text-amber-300">Khởi Động</strong> •{' '}
                       <strong className="text-amber-300">Vượt Chướng Ngại Vật</strong> •{' '}
@@ -133,8 +134,8 @@ export default function Home() {
                     </p>
 
                     <div className="max-w-md mx-auto mb-8">
-                      <label className="text-xs text-slate-400 font-bold block mb-2 text-left">
-                        Tên thí sinh leo núi:
+                      <label className="text-xs text-amber-300 font-black uppercase block mb-2 text-left tracking-wider">
+                        Họ tên thí sinh leo núi:
                       </label>
                       <div className="relative">
                         <User className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-400" />
@@ -143,38 +144,38 @@ export default function Home() {
                           value={candidateName}
                           onChange={(e) => setCandidateName(e.target.value)}
                           placeholder="Nhập họ tên của bạn..."
-                          className="w-full bg-slate-900/90 border border-slate-700 focus:border-amber-400 pl-11 pr-4 py-3 rounded-xl text-base text-slate-100 font-semibold outline-none"
+                          className="w-full bg-black/70 border-2 border-amber-500/60 focus:border-amber-400 pl-11 pr-4 py-3 rounded-xl text-base text-yellow-200 font-bold outline-none shadow-inner"
                         />
                       </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
                       <button
                         onClick={handleStartSolo}
-                        className="py-4 px-8 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-xl shadow-amber-500/30 transition-all flex items-center justify-center gap-2 text-base uppercase tracking-wider group"
+                        className="py-4 px-8 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-xl shadow-amber-500/40 transition-all flex items-center justify-center gap-2 text-base uppercase tracking-wider group cursor-pointer"
                       >
                         <Play className="w-5 h-5 fill-slate-950 group-hover:scale-110 transition-transform" />
-                        <span>Bắt Đầu Chinh Phục Ngay</span>
+                        <span>Bước Lên Bục Thi Đấu</span>
                       </button>
                     </div>
 
-                    {/* Features Badges */}
-                    <div className="mt-10 pt-6 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
-                      <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-                        <span className="text-xs font-bold text-amber-400 block mb-0.5">Khởi Động</span>
-                        <span className="text-[11px] text-slate-400">5s mỗi câu, đa lĩnh vực</span>
+                    {/* Features Badges matching TV rounds */}
+                    <div className="pt-6 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+                      <div className="p-3 bg-[#03091e]/80 rounded-xl border border-slate-800 shadow">
+                        <span className="text-xs font-black text-amber-400 block mb-0.5 uppercase">1. Khởi Động</span>
+                        <span className="text-[11px] text-slate-400">10 câu hỏi tốc độ</span>
                       </div>
-                      <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-                        <span className="text-xs font-bold text-amber-400 block mb-0.5">VCNV</span>
-                        <span className="text-[11px] text-slate-400">4 hàng ngang + mảnh ghép</span>
+                      <div className="p-3 bg-[#03091e]/80 rounded-xl border border-slate-800 shadow">
+                        <span className="text-xs font-black text-amber-400 block mb-0.5 uppercase">2. VCNV</span>
+                        <span className="text-[11px] text-slate-400">4 hàng ngang & ảnh bí mật</span>
                       </div>
-                      <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-                        <span className="text-xs font-bold text-amber-400 block mb-0.5">Tăng Tốc</span>
-                        <span className="text-[11px] text-slate-400">Điểm số theo tốc độ</span>
+                      <div className="p-3 bg-[#03091e]/80 rounded-xl border border-slate-800 shadow">
+                        <span className="text-xs font-black text-amber-400 block mb-0.5 uppercase">3. Tăng Tốc</span>
+                        <span className="text-[11px] text-slate-400">Tốc độ & phản xạ 40-10đ</span>
                       </div>
-                      <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-                        <span className="text-xs font-bold text-amber-400 block mb-0.5">Về Đích</span>
-                        <span className="text-[11px] text-slate-400">Ngôi sao hy vọng (x2 điểm)</span>
+                      <div className="p-3 bg-[#03091e]/80 rounded-xl border border-slate-800 shadow">
+                        <span className="text-xs font-black text-amber-400 block mb-0.5 uppercase">4. Về Đích</span>
+                        <span className="text-[11px] text-slate-400">Gói 20/30đ & Ngôi sao hy vọng</span>
                       </div>
                     </div>
                   </div>
@@ -183,6 +184,7 @@ export default function Home() {
                 {soloStage === 'kd' && (
                   <RoundKD
                     questions={kdQuestions}
+                    candidateName={candidateName}
                     onScoreUpdate={handleScoreUpdate}
                     onComplete={handleKDComplete}
                   />
@@ -191,6 +193,7 @@ export default function Home() {
                 {soloStage === 'vcnv' && (
                   <RoundVCNV
                     obstacles={obstacles}
+                    candidateName={candidateName}
                     onScoreUpdate={handleScoreUpdate}
                     onComplete={handleVCNVComplete}
                   />
@@ -199,6 +202,7 @@ export default function Home() {
                 {soloStage === 'tt' && (
                   <RoundTT
                     questions={ttQuestions}
+                    candidateName={candidateName}
                     onScoreUpdate={handleScoreUpdate}
                     onComplete={handleTTComplete}
                   />
@@ -207,6 +211,7 @@ export default function Home() {
                 {soloStage === 'vd' && (
                   <RoundVD
                     questions={vdQuestions}
+                    candidateName={candidateName}
                     onScoreUpdate={handleScoreUpdate}
                     onComplete={handleVDComplete}
                   />

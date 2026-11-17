@@ -2,73 +2,173 @@
 
 @layer base {
   :root {
-    --olympia-blue-dark: #050b1f;
-    --olympia-blue: #0c1a45;
-    --olympia-blue-light: #182c6c;
+    --olympia-blue-dark: #02071a;
+    --olympia-blue-stage: #051036;
+    --olympia-blue-light: #0d2568;
     --olympia-gold: #f59e0b;
-    --olympia-gold-light: #fde68a;
+    --olympia-gold-light: #fef08a;
     --olympia-gold-dark: #b45309;
+    --olympia-cyan: #06b6d4;
     --olympia-red: #ef4444;
     --olympia-green: #10b981;
   }
 
   body {
-    background-color: #050b1f;
-    color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #02071a;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Custom glowing effects */
-.glow-gold {
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
+/* TV Studio Lighting & Background */
+.vtv-studio-bg {
+  background: 
+    radial-gradient(circle at 50% -10%, rgba(24, 60, 160, 0.45) 0%, transparent 60%),
+    radial-gradient(circle at 20% 40%, rgba(6, 182, 212, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 80% 40%, rgba(245, 158, 11, 0.15) 0%, transparent 45%),
+    linear-gradient(180deg, #040d28 0%, #020719 60%, #01040f 100%);
+  position: relative;
 }
 
-.glow-blue {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.35);
+.vtv-studio-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 250px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(254, 240, 138, 0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.glow-red {
-  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+/* Studio Stage Floor Grid */
+.vtv-stage-grid {
+  background-image: 
+    linear-gradient(to right, rgba(245, 158, 11, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-.glow-green {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+/* VTV Broadcast Lower-Third & Question Box */
+.vtv-question-box {
+  background: linear-gradient(180deg, rgba(8, 22, 64, 0.95) 0%, rgba(3, 10, 32, 0.98) 100%);
+  border: 2px solid rgba(245, 158, 11, 0.6);
+  box-shadow: 
+    0 0 25px rgba(245, 158, 11, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 20px rgba(6, 182, 212, 0.15);
+  clip-path: polygon(
+    14px 0%, 
+    calc(100% - 14px) 0%, 
+    100% 14px, 
+    100% calc(100% - 14px), 
+    calc(100% - 14px) 100%, 
+    14px 100%, 
+    0% calc(100% - 14px), 
+    0% 14px
+  );
+  position: relative;
 }
 
-.olympia-gradient-bg {
-  background: radial-gradient(circle at 50% 20%, #162a6e 0%, #08112d 55%, #040816 100%);
+/* Beveled Corner Tag Badge */
+.vtv-badge {
+  clip-path: polygon(
+    8px 0%, 
+    calc(100% - 8px) 0%, 
+    100% 8px, 
+    100% calc(100% - 8px), 
+    calc(100% - 8px) 100%, 
+    8px 100%, 
+    0% calc(100% - 8px), 
+    0% 8px
+  );
 }
 
-.olympia-card {
-  background: rgba(13, 26, 69, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* 4-Podium Contestant Pedestals */
+.vtv-podium {
+  background: linear-gradient(180deg, rgba(13, 30, 84, 0.9) 0%, rgba(5, 13, 40, 0.95) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 12px, 100% 100%, 0% 100%, 0% 12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gold-gradient-text {
-  background: linear-gradient(135deg, #fff7ed 0%, #fde047 30%, #f59e0b 70%, #d97706 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.vtv-podium-active {
+  border-color: #f59e0b;
+  box-shadow: 
+    0 0 30px rgba(245, 158, 11, 0.6),
+    inset 0 0 15px rgba(245, 158, 11, 0.3);
+  transform: translateY(-4px) scale(1.02);
 }
 
-@keyframes pulse-ring {
+/* LED Scoreboard Digits */
+.vtv-score-led {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-shadow: 
+    0 0 10px rgba(245, 158, 11, 0.8),
+    0 0 20px rgba(245, 158, 11, 0.4);
+  letter-spacing: 0.05em;
+}
+
+/* 3D Flipping Letter Tiles for VCNV */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Star of Hope Glowing Flame Aura */
+@keyframes flame-glow {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6), inset 0 0 10px rgba(245, 158, 11, 0.3);
   }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 25px rgba(239, 68, 68, 0);
+  50% {
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.9), inset 0 0 25px rgba(254, 240, 138, 0.6);
   }
   100% {
-    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6), inset 0 0 10px rgba(245, 158, 11, 0.3);
+  }
+}
+
+.nshv-aura {
+  animation: flame-glow 1.5s ease-in-out infinite;
+  border-color: #fbbf24 !important;
+}
+
+/* Buzzer Pulse Ring */
+@keyframes buzzer-ring {
+  0% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+  }
+  70% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.96);
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
   }
 }
 
 .buzzer-active {
-  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: buzzer-ring 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gold Gradient Text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fffbeb 0%, #fde047 30%, #f59e0b 70%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
