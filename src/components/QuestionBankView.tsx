@@ -80,7 +80,7 @@ export default function QuestionBankView() {
           <div className="flex items-center gap-2">
             <Database className="w-5 h-5 text-amber-400" />
             <h2 className="text-xl font-black text-amber-300 uppercase tracking-wider">
-              Ngân Hàng Câu Hỏi Olympia (Supabase)
+              Ngân Hàng Câu Hỏi Olympia
             </h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">

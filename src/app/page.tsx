@@ -233,13 +233,6 @@ export default function Home() {
           </>
         )}
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500">
-        <p>
-          Ứng dụng Web "Đường lên đỉnh Olympia" • Dữ liệu Supabase • Sẵn sàng triển khai trên Vercel
-        </p>
-      </footer>
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function Header({ currentTab, setCurrentTab, score = 0 }: HeaderP
               Đường Lên Đỉnh Olympia
             </h1>
             <p className="text-[11px] text-amber-300/70 tracking-widest uppercase font-semibold">
-              Phiên bản Web • Supabase & Vercel
+              Trò Chơi Truyền Hình Trực Tuyến
             </p>
           </div>
         </div>
