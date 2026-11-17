@@ -35,9 +35,6 @@ export default function Header({ currentTab, setCurrentTab, score = 0 }: HeaderP
             <h1 className="font-extrabold text-lg md:text-xl tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-400 drop-shadow">
               Đường Lên Đỉnh Olympia
             </h1>
-            <p className="text-[11px] text-amber-300/70 tracking-widest uppercase font-semibold">
-              Trò Chơi Truyền Hình Trực Tuyến
-            </p>
           </div>
         </div>
 

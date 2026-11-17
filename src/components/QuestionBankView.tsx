@@ -51,7 +51,7 @@ export default function QuestionBankView() {
     setSubmitting(false);
 
     if (res.success) {
-      setStatusMessage({ text: 'Đã thêm câu hỏi thành công vào Supabase!', type: 'success' });
+      setStatusMessage({ text: 'Đã thêm câu hỏi thành công!', type: 'success' });
       setNewQuestion('');
       setNewAnswer('');
       setNewExplanation('');
@@ -150,7 +150,7 @@ export default function QuestionBankView() {
       {loading ? (
         <div className="text-center py-16 text-slate-400">
           <div className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Đang tải câu hỏi từ Supabase...</p>
+          <p className="text-sm">Đang tải câu hỏi...</p>
         </div>
       ) : filteredQuestions.length === 0 ? (
         <div className="text-center py-16 text-slate-400 olympia-card rounded-2xl p-8">
@@ -204,7 +204,7 @@ export default function QuestionBankView() {
           <div className="olympia-card max-w-lg w-full p-6 rounded-2xl border-amber-500/50 glow-gold max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-extrabold text-lg text-amber-300 uppercase">
-                Thêm Câu Hỏi Mới Vào Supabase
+                Thêm Câu Hỏi Mới
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
@@ -295,7 +295,7 @@ export default function QuestionBankView() {
                   disabled={submitting || !newQuestion.trim() || !newAnswer.trim()}
                   className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 font-bold text-white text-sm shadow transition-all disabled:opacity-50"
                 >
-                  {submitting ? 'Đang lưu vào Supabase...' : 'Lưu Câu Hỏi'}
+                  {submitting ? 'Đang lưu...' : 'Lưu Câu Hỏi'}
                 </button>
                 <button
                   type="button"

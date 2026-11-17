@@ -104,7 +104,7 @@ export default function Home() {
           <div className="text-center py-24">
             <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-amber-300 font-bold uppercase tracking-wider text-sm">
-              Đang kết nối Supabase và tải bộ đề Olympia...
+              Đang tải bộ đề Olympia...
             </p>
           </div>
         ) : (

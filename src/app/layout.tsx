@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Đường Lên Đỉnh Olympia | Web Game & Đấu Trực Tuyến",
-  description: "Trò chơi truyền hình Đường lên đỉnh Olympia trên nền tảng Web với 4 vòng thi: Khởi động, Vượt chướng ngại vật, Tăng tốc, Về đích, kết nối Supabase Realtime và triển khai trên Vercel.",
+  description: "Trò chơi truyền hình Đường lên đỉnh Olympia trên nền tảng Web với đầy đủ 4 vòng thi: Khởi động, Vượt chướng ngại vật, Tăng tốc, Về đích.",
   icons: {
     icon: "/images/icon.png",
   },
