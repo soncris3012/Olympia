@@ -361,7 +361,7 @@ export default function MultiplayerView() {
                   <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
                     Thí Sinh {p.slot}
                   </span>
-                  <h3 className="text-lg font-black text-slate-100 truncate">
+                  <h3 className="text-sm sm:text-base md:text-lg font-black text-slate-100 break-words line-clamp-2 min-h-[2.5rem] flex items-center justify-center">
                     {p.name}
                   </h3>
                 </div>
@@ -478,7 +478,7 @@ export default function MultiplayerView() {
 
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-2xl">{p.avatar}</span>
-                <span className="font-bold text-sm text-slate-200 truncate">{p.name}</span>
+                <span className="font-bold text-xs sm:text-sm text-slate-200 break-words line-clamp-1">{p.name}</span>
               </div>
 
               {/* Score */}

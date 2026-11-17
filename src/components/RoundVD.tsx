@@ -103,13 +103,36 @@ export default function RoundVD({ questions, onComplete, onScoreUpdate }: RoundV
     };
   }, [selectedPackage, currentIndex, isAnswerSubmitted, isRoundFinished]);
 
-  const normalizeText = (text: string) => {
+  const cleanString = (text: string) => {
     return text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '')
       .trim();
+  };
+
+  const checkAnswerMatch = (input: string, targetAnswer: string): boolean => {
+    const cleanInput = cleanString(input);
+    if (!cleanInput) return false;
+
+    const cleanTarget = cleanString(targetAnswer);
+    if (cleanTarget === cleanInput || cleanTarget.includes(cleanInput) || cleanInput.includes(cleanTarget)) {
+      return true;
+    }
+
+    const parts = targetAnswer
+      .split(/[\/,\(\)]/)
+      .map((p) => cleanString(p))
+      .filter((p) => p.length > 1);
+
+    for (const part of parts) {
+      if (part === cleanInput || part.includes(cleanInput) || cleanInput.includes(part)) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const handleToggleHopeStar = () => {
@@ -141,10 +164,7 @@ export default function RoundVD({ questions, onComplete, onScoreUpdate }: RoundV
 
     if (timerRef.current) clearInterval(timerRef.current);
 
-    const normInput = normalizeText(userAnswer);
-    const normAns = normalizeText(currentQ.answer);
-
-    const isMatch = normInput.length > 0 && (normAns.includes(normInput) || normInput.includes(normAns));
+    const isMatch = checkAnswerMatch(userAnswer, currentQ.answer);
 
     setIsAnswerSubmitted(true);
 

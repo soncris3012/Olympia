@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Obstacle, ObstacleRow } from '@/lib/types';
 import { soundManager } from '@/lib/audio';
-import { HelpCircle, Bell, ArrowRight, Eye, CheckCircle2, XCircle, Award } from 'lucide-react';
+import { HelpCircle, Bell, ArrowRight, Eye, CheckCircle2, XCircle, Award, Shuffle } from 'lucide-react';
 
 interface RoundVCNVProps {
   obstacles: Obstacle[];
@@ -12,23 +12,29 @@ interface RoundVCNVProps {
 }
 
 export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: RoundVCNVProps) {
-  const obstacle = obstacles[0] || {
-    id: 'obs-1',
-    title: 'VCNV: ĐỒ SƠN',
-    keyword: 'ĐỒ SƠN',
-    char_count: 5,
-    image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-    rows: [
-      { row: 1, char_count: 6, question: 'Tên vị hoàng đế cuối cùng của triều đại phong kiến Việt Nam?', answer: 'BẢO ĐẠI' },
-      { row: 2, char_count: 4, question: 'Lễ hội truyền thống độc đáo tổ chức vào mùng 9 tháng 8 âm lịch tại Hải Phòng là lễ hội chọi gì?', answer: 'TRÂU' },
-      { row: 3, char_count: 6, question: 'Ngọn hải đăng cổ kính hơn 100 năm tuổi mệnh danh là "Mắt ngọc của Tổ quốc" nằm trên hòn đảo nào?', answer: 'HÒN DẤU' },
-      { row: 4, char_count: 4, question: 'Bến tàu K15 tại nơi đây là điểm xuất phát huyền thoại của đoàn tàu không số trên...?', answer: 'BIỂN' },
-    ],
-    center_clue: {
-      question: 'Bán đảo du lịch ven biển nổi tiếng của thành phố Hải Phòng là gì?',
-      answer: 'ĐỒ SƠN'
+  const [selectedObsIndex, setSelectedObsIndex] = useState(0);
+
+  const obstacleList = obstacles.length > 0 ? obstacles : [
+    {
+      id: 'obs-1',
+      title: 'VCNV: ĐỒ SƠN',
+      keyword: 'ĐỒ SƠN',
+      char_count: 5,
+      image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+      rows: [
+        { row: 1, char_count: 6, question: 'Tên vị hoàng đế cuối cùng của triều đại phong kiến Việt Nam?', answer: 'BẢO ĐẠI' },
+        { row: 2, char_count: 4, question: 'Lễ hội truyền thống độc đáo tổ chức vào mùng 9 tháng 8 âm lịch tại Hải Phòng là lễ hội chọi gì?', answer: 'TRÂU' },
+        { row: 3, char_count: 6, question: 'Ngọn hải đăng cổ kính hơn 100 năm tuổi mệnh danh là "Mắt ngọc của Tổ quốc" nằm trên hòn đảo nào?', answer: 'HÒN DẤU' },
+        { row: 4, char_count: 4, question: 'Bến tàu K15 tại nơi đây là điểm xuất phát huyền thoại của đoàn tàu không số trên...?', answer: 'BIỂN' },
+      ],
+      center_clue: {
+        question: 'Bán đảo du lịch ven biển nổi tiếng của thành phố Hải Phòng là gì?',
+        answer: 'ĐỒ SƠN'
+      }
     }
-  };
+  ];
+
+  const obstacle = obstacleList[selectedObsIndex % obstacleList.length];
 
   const [activeRow, setActiveRow] = useState<ObstacleRow | null>(null);
   const [revealedPieces, setRevealedPieces] = useState<number[]>([]); // 1..4 (corners), 5 (center)
@@ -75,13 +81,26 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
     };
   }, [isTimerRunning, activeRow]);
 
-  const normalizeText = (text: string) => {
+  const cleanString = (text: string) => {
     return text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '')
       .trim();
+  };
+
+  const checkMatch = (input: string, target: string): boolean => {
+    const cInput = cleanString(input);
+    const cTarget = cleanString(target);
+    if (!cInput) return false;
+    if (cInput === cTarget || cTarget.includes(cInput) || cInput.includes(cTarget)) return true;
+
+    const parts = target.split(/[\/,\(\)]/).map((p) => cleanString(p)).filter((p) => p.length > 1);
+    for (const p of parts) {
+      if (p === cInput || p.includes(cInput) || cInput.includes(p)) return true;
+    }
+    return false;
   };
 
   const handleSelectRow = (row: ObstacleRow) => {
@@ -108,7 +127,7 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
     if (timerRef.current) clearInterval(timerRef.current);
     setIsTimerRunning(false);
 
-    const isMatch = normalizeText(inputAnswer) === normalizeText(activeRow.answer);
+    const isMatch = checkMatch(inputAnswer, activeRow.answer);
 
     if (isMatch) {
       soundManager.play('/audio/vcnv/CorrectRow.mp3');
@@ -142,10 +161,9 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
     e.preventDefault();
     setIsBuzzModalOpen(false);
 
-    const isMatch = normalizeText(cnvGuess) === normalizeText(obstacle.keyword);
+    const isMatch = checkMatch(cnvGuess, obstacle.keyword);
 
     if (isMatch) {
-      // Calculate points based on revealed count
       const revealedCount = revealedPieces.length;
       let points = 60;
       if (revealedCount === 1) points = 50;
@@ -172,6 +190,16 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
     }
   };
 
+  const handleSwitchObstacle = () => {
+    setSelectedObsIndex((prev) => (prev + 1) % obstacleList.length);
+    setRevealedPieces([]);
+    setRowAnswers({});
+    setActiveRow(null);
+    setIsCnvSolved(false);
+    setIsEliminated(false);
+    setMessage(null);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Top Banner */}
@@ -183,6 +211,15 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
           <span className="text-xs text-slate-300">
             Từ khóa gồm: <strong className="text-amber-400">{obstacle.char_count} chữ cái</strong>
           </span>
+          {obstacleList.length > 1 && !isCnvSolved && revealedPieces.length === 0 && (
+            <button
+              onClick={handleSwitchObstacle}
+              className="text-[11px] text-slate-400 hover:text-amber-300 px-2 py-0.5 rounded bg-slate-800 border border-slate-700 flex items-center gap-1"
+            >
+              <Shuffle className="w-3 h-3" />
+              <span>Đổi Đề Khác</span>
+            </button>
+          )}
         </div>
 
         {/* Buzzer Button */}
@@ -347,9 +384,9 @@ export default function RoundVCNV({ obstacles, onComplete, onScoreUpdate }: Roun
               type="text"
               value={inputAnswer}
               onChange={(e) => setInputAnswer(e.target.value)}
-              placeholder="Gõ đáp án hàng ngang..."
+              placeholder="Gõ đáp án hàng ngang (nhấn Enter)..."
               autoFocus
-              className="flex-1 bg-slate-950 border border-slate-700 focus:border-amber-400 text-slate-100 px-4 py-2.5 rounded-xl outline-none"
+              className="flex-1 bg-slate-950 border border-slate-700 focus:border-amber-400 text-slate-100 px-4 py-2.5 rounded-xl outline-none uppercase font-bold"
             />
             <button
               type="submit"

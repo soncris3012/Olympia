@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { OlympiaQuestion } from '@/lib/types';
 import { soundManager } from '@/lib/audio';
-import { FastForward, Timer, ArrowRight, CheckCircle2, XCircle, Award, Zap } from 'lucide-react';
+import { FastForward, Timer, ArrowRight, CheckCircle2, XCircle, Zap, RotateCcw } from 'lucide-react';
 
 interface RoundTTProps {
   questions: OlympiaQuestion[];
@@ -59,13 +59,36 @@ export default function RoundTT({ questions, onComplete, onScoreUpdate }: RoundT
     };
   }, [currentIndex, isAnswerSubmitted, isRoundFinished]);
 
-  const normalizeText = (text: string) => {
+  const cleanString = (text: string) => {
     return text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '')
       .trim();
+  };
+
+  const checkAnswerMatch = (input: string, targetAnswer: string): boolean => {
+    const cleanInput = cleanString(input);
+    if (!cleanInput) return false;
+
+    const cleanTarget = cleanString(targetAnswer);
+    if (cleanTarget === cleanInput || cleanTarget.includes(cleanInput) || cleanInput.includes(cleanTarget)) {
+      return true;
+    }
+
+    const parts = targetAnswer
+      .split(/[\/,\(\)]/)
+      .map((p) => cleanString(p))
+      .filter((p) => p.length > 1);
+
+    for (const part of parts) {
+      if (part === cleanInput || part.includes(cleanInput) || cleanInput.includes(part)) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const handleTimeOut = () => {
@@ -81,19 +104,11 @@ export default function RoundTT({ questions, onComplete, onScoreUpdate }: RoundT
     if (timerRef.current) clearInterval(timerRef.current);
 
     const elapsedSeconds = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000));
-    const normInput = normalizeText(userAnswer);
-    const normAns = normalizeText(currentQ.answer);
-
-    const isMatch = normInput.length > 0 && (normAns.includes(normInput) || normInput.includes(normAns));
+    const isMatch = checkAnswerMatch(userAnswer, currentQ.answer);
 
     setIsAnswerSubmitted(true);
 
     if (isMatch) {
-      // Speed bonus:
-      // Answered under 5s: +40 points
-      // Answered under 10s: +30 points
-      // Answered under 15s: +20 points
-      // Later: +10 points
       let points = 40;
       if (elapsedSeconds > 15) points = 10;
       else if (elapsedSeconds > 10) points = 20;
@@ -119,6 +134,23 @@ export default function RoundTT({ questions, onComplete, onScoreUpdate }: RoundT
       setLastResult(null);
     }
   };
+
+  // Quick tap chip append for ABCD sequence
+  const handleChipClick = (letter: string) => {
+    if (isAnswerSubmitted) return;
+    if (!userAnswer) {
+      setUserAnswer(letter);
+    } else if (!userAnswer.includes(letter)) {
+      setUserAnswer((prev) => `${prev} - ${letter}`);
+    }
+  };
+
+  const handleClearAnswer = () => {
+    if (isAnswerSubmitted) return;
+    setUserAnswer('');
+  };
+
+  const hasOptions = currentQ.metadata?.options && Array.isArray(currentQ.metadata.options);
 
   if (isRoundFinished) {
     return (
@@ -186,13 +218,50 @@ export default function RoundTT({ questions, onComplete, onScoreUpdate }: RoundT
         </h3>
 
         {/* Options list if available */}
-        {currentQ.metadata?.options && (
-          <div className="my-4 grid grid-cols-2 gap-2">
-            {currentQ.metadata.options.map((opt: string, i: number) => (
-              <div key={i} className="p-3 bg-slate-900/80 border border-slate-700/60 rounded-xl text-sm font-semibold text-slate-200">
-                {opt}
-              </div>
+        {hasOptions && (
+          <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {currentQ.metadata!.options.map((opt: string, i: number) => {
+              const letter = ['A', 'B', 'C', 'D'][i];
+              return (
+                <div
+                  key={i}
+                  onClick={() => handleChipClick(letter)}
+                  className="p-3 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-amber-400/60 rounded-xl text-sm font-semibold text-slate-200 cursor-pointer transition-all flex items-center justify-between group"
+                >
+                  <span>{opt}</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-amber-400 font-bold group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                    +{letter}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Quick tap chips for sequence questions */}
+        {hasOptions && !isAnswerSubmitted && (
+          <div className="mb-4 flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-slate-400 font-bold">Chạm để chọn thứ tự:</span>
+            {['A', 'B', 'C', 'D'].map((letter) => (
+              <button
+                key={letter}
+                type="button"
+                onClick={() => handleChipClick(letter)}
+                className="w-9 h-9 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-black text-sm border border-amber-500/40 transition-all flex items-center justify-center active:scale-95"
+              >
+                {letter}
+              </button>
             ))}
+            {userAnswer && (
+              <button
+                type="button"
+                onClick={handleClearAnswer}
+                className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1 ml-auto"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Xóa làm lại</span>
+              </button>
+            )}
           </div>
         )}
 
@@ -234,9 +303,9 @@ export default function RoundTT({ questions, onComplete, onScoreUpdate }: RoundT
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             disabled={isAnswerSubmitted}
-            placeholder="Gõ đáp án thật nhanh..."
+            placeholder={hasOptions ? "Chọn thứ tự A, B, C, D hoặc gõ đáp án..." : "Gõ đáp án thật nhanh..."}
             autoFocus
-            className="flex-1 bg-slate-900/90 border border-slate-700 focus:border-amber-400 text-slate-100 px-4 py-3 rounded-xl text-base outline-none transition-all placeholder:text-slate-500 disabled:opacity-50"
+            className="flex-1 bg-slate-900/90 border border-slate-700 focus:border-amber-400 text-slate-100 px-4 py-3 rounded-xl text-base outline-none transition-all placeholder:text-slate-500 disabled:opacity-50 font-bold uppercase tracking-wide"
           />
 
           {!isAnswerSubmitted ? (

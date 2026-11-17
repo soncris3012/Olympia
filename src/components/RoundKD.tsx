@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { OlympiaQuestion } from '@/lib/types';
 import { soundManager } from '@/lib/audio';
-import { Timer, ArrowRight, CheckCircle2, XCircle, Award } from 'lucide-react';
+import { Timer, ArrowRight, CheckCircle2, XCircle, Award, Settings, Zap } from 'lucide-react';
 
 interface RoundKDProps {
   questions: OlympiaQuestion[];
@@ -13,6 +13,7 @@ interface RoundKDProps {
 
 export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundKDProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [timerMode, setTimerMode] = useState<5 | 8>(5); // 5s VTV standard vs 8s relaxed typing
   const [timeLeft, setTimeLeft] = useState(5);
   const [userAnswer, setUserAnswer] = useState('');
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
@@ -24,18 +25,16 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentQ = questions[currentIndex] || questions[0];
-  const maxQuestions = Math.min(questions.length, 8); // 8 fast questions for standard warm-up
+  const maxQuestions = Math.min(questions.length, 10); // 10 fast questions
 
-  // Start round sound
   useEffect(() => {
     soundManager.playStartRound();
   }, []);
 
-  // Timer loop
   useEffect(() => {
     if (isAnswerSubmitted || isRoundFinished) return;
 
-    setTimeLeft(currentQ.time_limit || 5);
+    setTimeLeft(timerMode);
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -51,15 +50,41 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentIndex, isAnswerSubmitted, isRoundFinished]);
+  }, [currentIndex, isAnswerSubmitted, isRoundFinished, timerMode]);
 
-  const normalizeText = (text: string) => {
+  const cleanString = (text: string) => {
     return text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '')
       .trim();
+  };
+
+  // Smart matching checking main answer and any alias in parentheses/slashes
+  const checkAnswerMatch = (input: string, targetAnswer: string): boolean => {
+    const cleanInput = cleanString(input);
+    if (!cleanInput) return false;
+
+    // Check direct match
+    const cleanTarget = cleanString(targetAnswer);
+    if (cleanTarget === cleanInput || cleanTarget.includes(cleanInput) || cleanInput.includes(cleanTarget)) {
+      return true;
+    }
+
+    // Split target into parts by slash, commas, parentheses
+    const parts = targetAnswer
+      .split(/[\/,\(\)]/)
+      .map((p) => cleanString(p))
+      .filter((p) => p.length > 1);
+
+    for (const part of parts) {
+      if (part === cleanInput || part.includes(cleanInput) || cleanInput.includes(part)) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const handleTimeOut = () => {
@@ -74,10 +99,7 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
 
     if (timerRef.current) clearInterval(timerRef.current);
 
-    const normInput = normalizeText(userAnswer);
-    const normAns = normalizeText(currentQ.answer);
-
-    const isMatch = normInput.length > 0 && (normAns.includes(normInput) || normInput.includes(normAns));
+    const isMatch = checkAnswerMatch(userAnswer, currentQ.answer);
 
     setIsAnswerSubmitted(true);
     if (isMatch) {
@@ -113,7 +135,7 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
           Hoàn Thành Phần Thi Khởi Động
         </h2>
         <p className="text-slate-300 text-sm mb-6">
-          Bạn đã thể hiện phản xạ rất tốt trong vòng khởi động đầu tiên!
+          Bạn đã hoàn thành chặng khởi động đầy tốc độ và phản xạ!
         </p>
 
         <div className="grid grid-cols-2 gap-4 mb-8">
@@ -140,8 +162,8 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      {/* Top Round Indicator & Timer Bar */}
-      <div className="flex items-center justify-between bg-slate-900/80 px-5 py-3 rounded-xl border border-amber-500/20 shadow-md">
+      {/* Top Round Indicator & Timer Settings Bar */}
+      <div className="flex flex-wrap items-center justify-between bg-slate-900/80 px-5 py-3 rounded-xl border border-amber-500/20 shadow-md gap-3">
         <div className="flex items-center gap-3">
           <span className="px-2.5 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-md uppercase border border-amber-500/30">
             Vòng 1: Khởi Động
@@ -154,20 +176,45 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
           </span>
         </div>
 
-        {/* Circular Countdown Timer */}
-        <div className="flex items-center gap-2">
-          <Timer className={`w-5 h-5 ${timeLeft <= 2 ? 'text-rose-400 animate-bounce' : 'text-amber-400'}`} />
-          <span className={`text-2xl font-black font-mono ${timeLeft <= 2 ? 'text-rose-400' : 'text-amber-300'}`}>
-            {timeLeft}s
-          </span>
+        <div className="flex items-center gap-4">
+          {/* Timer Mode Toggle */}
+          <div className="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg border border-slate-700 text-[11px]">
+            <button
+              onClick={() => setTimerMode(5)}
+              className={`px-2 py-1 rounded font-bold transition-all ${
+                timerMode === 5
+                  ? 'bg-amber-500 text-slate-950 shadow'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Thời gian chuẩn 5 giây theo luật VTV"
+            >
+              5s Chuẩn VTV
+            </button>
+            <button
+              onClick={() => setTimerMode(8)}
+              className={`px-2 py-1 rounded font-bold transition-all ${
+                timerMode === 8
+                  ? 'bg-amber-500 text-slate-950 shadow'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Thời gian thong thả 8 giây để gõ tiếng Việt"
+            >
+              8s Thong thả
+            </button>
+          </div>
+
+          {/* Countdown Clock */}
+          <div className="flex items-center gap-1.5">
+            <Timer className={`w-5 h-5 ${timeLeft <= 2 ? 'text-rose-400 animate-bounce' : 'text-amber-400'}`} />
+            <span className={`text-2xl font-black font-mono ${timeLeft <= 2 ? 'text-rose-400' : 'text-amber-300'}`}>
+              {timeLeft}s
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Question Card */}
       <div className="olympia-card rounded-2xl p-6 md:p-8 relative overflow-hidden">
-        {/* Glow corner */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-
         <div className="mb-2">
           <span className="text-xs font-semibold text-amber-400/80 uppercase tracking-wider">
             {currentQ.category || 'Kiến thức chung'}
@@ -214,7 +261,7 @@ export default function RoundKD({ questions, onComplete, onScoreUpdate }: RoundK
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             disabled={isAnswerSubmitted}
-            placeholder="Nhập câu trả lời của bạn..."
+            placeholder="Gõ đáp án nhanh (nhấn Enter)..."
             autoFocus
             className="flex-1 bg-slate-900/90 border border-slate-700 focus:border-amber-400 text-slate-100 px-4 py-3 rounded-xl text-base outline-none transition-all placeholder:text-slate-500 disabled:opacity-50"
           />

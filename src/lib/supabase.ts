@@ -227,6 +227,23 @@ export const DEFAULT_OBSTACLES: Obstacle[] = [
       question: 'Giải bóng đá vô địch quốc gia hàng đầu Tây Ban Nha là gì?',
       answer: 'LALIGA'
     }
+  },
+  {
+    id: 'obs-3',
+    title: 'VCNV: TRỐNG ĐỒNG',
+    keyword: 'TRỐNG ĐỒNG',
+    char_count: 9,
+    image_url: 'https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=800',
+    rows: [
+      { row: 1, char_count: 7, question: 'Nền văn hóa khảo cổ học thời kỳ đồ đồng nổi tiếng ở miền Bắc Việt Nam mang tên là gì?', answer: 'ĐÔNG SƠN' },
+      { row: 2, char_count: 4, question: 'Tên kim loại đóng vai trò chủ đạo trong hợp kim đúc nên các loại vũ khí và đồ tế khí thời kỳ Văn Lang?', answer: 'ĐỒNG' },
+      { row: 3, char_count: 7, question: 'Hình tượng loài chim thiêng biểu tượng của người Việt cổ, thường khắc bay ngược chiều kim đồng hồ quanh mặt trống?', answer: 'CHIM LẠC' },
+      { row: 4, char_count: 6, question: 'Chiếc trống đồng cổ tiêu biểu được tìm thấy tại Hà Nam, hiện là Bảo vật Quốc gia số 1 của Việt Nam, có tên là gì?', answer: 'NGỌC LŨ' },
+    ],
+    center_clue: {
+      question: 'Nhạc khí gõ tiêu biểu bằng kim loại đồng của nền văn minh sông Hồng, biểu tượng trường tồn của văn hóa Việt Nam?',
+      answer: 'TRỐNG ĐỒNG'
+    }
   }
 ];
 
